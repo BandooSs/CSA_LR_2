@@ -1,31 +1,26 @@
 # Лабораторная работа №2. Приложение с использованием Spring Framework #
+Работу выполнили студенты группы 6132: ***Курицын Никита*** и ***Яшакин Андрей***  
 ## Задание № 1 ##
 Модель используем **такую же** как и в первой лабораторной работе.
 
 ## Задание № 2 ##
-В слой с данными был добавлен интерфейс для доступа к данным:
-- **PlayerDAO**.
-В нём был именован метод **getAll**.
-The data layer is the same as it was before. But we have additional configuration files and modify already existing ones.
+В файле *application.properties* прописали  параметры конфигурации для подключения к базе данных PostgreSQL.
+Реализованы две (модели данных) сущности: **Player** и **Team**.
 
-We create mvc-config.xml configuration file that 
-- enables annotation-driven mode;
-- specifies a base package to look for components;
-- specifies rules for view files;
-- defines EntityManagerFactory bean that heavily relies on persistence.xml we created before;
-- defines TransactionManager.
-
-As for persistence.xml, the only modification was related to transactions:
-
-
-
-We also rewrote web.xml:
-- included config location;
-- added ContextLoaderListener;
-- configured dispatcher.
+Также  реализована связь **один ко многим** => одна команда может иметь много игроков, но каждый игрок может быть связан только с одной командой.
+Используются следующие аннотации:
+1. **@Entity** - отмечает класс как сущность базы данных.
+2. **@Id** - устанавливает поле как первичный ключ (Primary Key).
+3. **@GeneratedValue** - устанавливает стратегию генерации значений для первичного ключа.
+4. **@Column** - отмечает поле как колонку в таблице, когда имя поля неочевидно для записи в базу данных.
+5. **@ManyToOne** - используется для работы с полями внешнего ключа (Foreign Key).
+6. **@JoinColumn** - используется для явного указания имени колонки в базе данных, где будет храниться внешний ключ при использовании аннотации @ManyToOne.
+7. **@Data**: Аннотация Lombok, автоматически генерирующая методы getter, setter, equals, hashCode и toString для класса.
+8. **@NoArgsConstructor** и **@AllArgsConstructor**: Аннотации Lombok, автоматически генерирующие конструктор без аргументов и конструктор, принимающий все поля класса соответственно.
 
 ## Задание № 3 ##
-Our business layer is pretty much as before, but uses @Service and @Transactional annotations for each Service class.
+Бизнес уровень остался прежним, только используется аннотация **@Service** (класс является сервисом в контексте Spring) и **@Autowired** (используется для внедрения зависимости PlayerRepository).
+
 
 ## Задание № 4 ##
 
@@ -35,22 +30,22 @@ Our business layer is pretty much as before, but uses @Service and @Transactiona
 
 - **@Controller** для обозначения контроллера;
 - **@Autowired** для предоставления экземпляра сервиса.
+- **@GetMapping** для получения данных из сервера
+- **@PostMapping** для отправки форм
 
 
 ## Задание № 5 ##
-### Demonstration and Issues###
-The demonstration is the same as before. The only thing we would like to point out is that there's a problem with adding records containing Russian symbols. For example:
+Для того чтобы все **работало вместе**, необходимо:
 
-![изображение](https://github.com/RaisssHab/ESA2023/assets/60664914/2605c012-5588-48ac-83ef-3edbef9d8661)
+1. запустить проект;
+2. перейти по ссылке http://localhost:8081/ .
 
-![изображение](https://github.com/RaisssHab/ESA2023/assets/60664914/df792514-7dee-4d84-882d-f2c2dffe06b5)
 
-But it wasn't the same with the previous application:
+Основная страничка, которая содержит два перехода на другие старницы с игроками и командами, а также красивое **приветствие**:
+![изображение](https://github.com/BandooSs/CSA_LR_2/blob/master/screenshot/1.png)
 
-![изображение](https://github.com/RaisssHab/ESA2023/assets/60664914/8236b369-afff-4fc5-babf-8193a0d8429a)
+Страничка игроков (http://localhost:8081/players), где выводится информация о них и возможность добавления игроков:  
+![изображение](https://github.com/BandooSs/CSA_LR_2/blob/master/screenshot/2.png)
 
-Note that we can see Russian letters from the database correctly, but get a mess when trying to persist entries with them:
-
-![изображение](https://github.com/RaisssHab/ESA2023/assets/60664914/c4a3d4df-f8f7-4d2b-913c-480b35ba2dcd)
-
-A lot of attemps were taken to resolve the issue, but with no success so far.
+Страничка конмад (http://localhost:8081/teams), где выводится информация о них и возможность добавления новой команды:  
+![изображение](https://github.com/BandooSs/CSA_LR_2/blob/master/screenshot/3.png)
